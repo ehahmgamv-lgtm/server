@@ -20,14 +20,15 @@ jobs:
           }
 
           func main() {
-              fasthttp.ListenAndServe(":8080", requestHandler)
+              fasthttp.ListenAndServe("127.0.0.1:8080", requestHandler)
           }
           EOF
       - name: Prepare and run fasthttp server
         run: |
           go mod init bench
           go get github.com/valyala/fasthttp
-          go run main.go &
-          sleep 3
+          go build -o server main.go
+          ./server &
+          sleep 2
       - name: Run wrk benchmark
-        run: wrk -t 1 -c 1 -d 10s http://localhost:8080
+        run: wrk -t 1 -c 1 -d 10s http://127.0.0.1:8080
