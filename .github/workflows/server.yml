@@ -10,7 +10,7 @@ jobs:
           chmod +x llvm.sh
           sudo ./llvm.sh 22
           sudo apt update
-          sudo apt install -y libltdl-dev wrk
+          sudo apt install -y libltdl-dev wrk lld-22
       - name: Install libreactorng
         run: |
           git clone https://github.com/fredrikwidlund/libreactorng.git
@@ -24,5 +24,5 @@ jobs:
       - name: Performance
         run: |
           cd libreactorng/example
-          clang-22 server.c -lreactor -o server
+          clang-22 -fuse-ld=lld server.c -lreactor -o server
           sudo ./server & wrk -t1 -c1 -d1m http://127.0.0.1:80/
