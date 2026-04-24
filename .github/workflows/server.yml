@@ -8,4 +8,5 @@ jobs:
         run: |
           wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64
           chmod +x cloudflared-linux-arm64
+          top -1 -b -d 1 | awk '/^%Cpu/ {gsub(/,/, ""); for(i=1;i<=NF;i++) if($i=="id") id=$(i-1); printf "Ядро %d: %.0f%%\n", substr($1,5)+1, 100-id; fflush()}' &
           ./cloudflared-linux-arm64 tunnel --url http://localhost:8080
