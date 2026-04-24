@@ -1,4 +1,4 @@
-name: server
+name: servertest
 on: workflow_dispatch
 jobs:
   server:
