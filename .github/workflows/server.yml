@@ -10,7 +10,7 @@ jobs:
           chmod +x llvm.sh
           sudo ./llvm.sh 22
           sudo apt update
-          sudo apt install -y libltdl-dev clang-22
+          sudo apt install -y libltdl-dev
       - name: Install libreactorng
         run: |
           git clone https://github.com/fredrikwidlund/libreactorng.git
