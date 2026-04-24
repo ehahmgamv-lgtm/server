@@ -15,6 +15,7 @@ jobs:
         run: |
           git clone https://github.com/fredrikwidlund/libreactorng.git
           cd libreactorng
+          find src/ -type f -name "*.[ch]" -exec sed -i -E 's/(__sync_[a-z_]+)\([[:space:]]*&/\1((size_t *)\&/g' {} +
           ./autogen.sh
           CC=clang-22 ./configure
           make
