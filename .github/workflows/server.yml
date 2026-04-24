@@ -6,7 +6,9 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 22
           sudo apt update
           sudo apt install -y libltdl-dev clang-22
       - name: Install libreactorng
