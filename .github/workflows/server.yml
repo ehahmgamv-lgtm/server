@@ -1,41 +1,14 @@
 name: server
 on: workflow_dispatch
 jobs:
-  a-clang-22:
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - name: Install dependencies
-        run: |
-          wget https://apt.llvm.org/llvm.sh
-          chmod +x llvm.sh
-          sudo ./llvm.sh 22
-          sudo apt update
-          sudo apt install -y libltdl-dev wrk lld-22
-      - name: Install libreactorng
-        run: |
-          git clone https://github.com/fredrikwidlund/libreactorng.git
-          cd libreactorng
-          find src/ -type f -name "*.[ch]" -exec sed -i -E 's/(__sync_[a-z_]+)\([[:space:]]*&/\1((size_t *)\&/g' {} +
-          ./autogen.sh
-          CC=clang-22 AR=llvm-ar-22 RANLIB=llvm-ranlib-22 NM=llvm-nm-22 ./configure
-          make
-          sudo make install
-          sudo ldconfig
-      - name: Performance
-        run: |
-          cd libreactorng/example
-          clang-22 -fuse-ld=lld server.c -lreactor -o server
-          sudo ./server &
-          sleep 60
-          wrk -t1 -c1 -d1m http://127.0.0.1:80/
-  a-gcc-15:
+  server:
     runs-on: ubuntu-24.04-arm
     steps:
       - name: Install dependencies
         run: |
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
           sudo apt update
-          sudo apt install -y libltdl-dev wrk gcc-15
+          sudo apt install -y libltdl-dev wrk gcc-15 iotop
       - name: Install libreactorng
         run: |
           git clone https://github.com/fredrikwidlund/libreactorng.git
@@ -51,106 +24,5 @@ jobs:
           gcc-15 server.c -lreactor -o server
           sudo ./server &
           sleep 60
-          wrk -t1 -c1 -d1m http://127.0.0.1:80/
-  b-clang-22:
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - name: Install dependencies
-        run: |
-          wget https://apt.llvm.org/llvm.sh
-          chmod +x llvm.sh
-          sudo ./llvm.sh 22
-          sudo apt update
-          sudo apt install -y libltdl-dev wrk lld-22
-      - name: Install libreactorng
-        run: |
-          git clone https://github.com/fredrikwidlund/libreactorng.git
-          cd libreactorng
-          find src/ -type f -name "*.[ch]" -exec sed -i -E 's/(__sync_[a-z_]+)\([[:space:]]*&/\1((size_t *)\&/g' {} +
-          ./autogen.sh
-          CC=clang-22 AR=llvm-ar-22 RANLIB=llvm-ranlib-22 NM=llvm-nm-22 ./configure
-          make
-          sudo make install
-          sudo ldconfig
-      - name: Performance
-        run: |
-          cd libreactorng/example
-          clang-22 -fuse-ld=lld server.c -lreactor -o server
-          sudo ./server &
-          sleep 60
-          wrk -t1 -c1 -d1m http://127.0.0.1:80/
-  b-gcc-15:
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - name: Install dependencies
-        run: |
-          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-          sudo apt update
-          sudo apt install -y libltdl-dev wrk gcc-15
-      - name: Install libreactorng
-        run: |
-          git clone https://github.com/fredrikwidlund/libreactorng.git
-          cd libreactorng
-          ./autogen.sh
-          CC=gcc-15 ./configure
-          make
-          sudo make install
-          sudo ldconfig
-      - name: Performance
-        run: |
-          cd libreactorng/example
-          gcc-15 server.c -lreactor -o server
-          sudo ./server &
-          sleep 60
-          wrk -t1 -c1 -d1m http://127.0.0.1:80/
-  v-clang-22:
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - name: Install dependencies
-        run: |
-          wget https://apt.llvm.org/llvm.sh
-          chmod +x llvm.sh
-          sudo ./llvm.sh 22
-          sudo apt update
-          sudo apt install -y libltdl-dev wrk lld-22
-      - name: Install libreactorng
-        run: |
-          git clone https://github.com/fredrikwidlund/libreactorng.git
-          cd libreactorng
-          find src/ -type f -name "*.[ch]" -exec sed -i -E 's/(__sync_[a-z_]+)\([[:space:]]*&/\1((size_t *)\&/g' {} +
-          ./autogen.sh
-          CC=clang-22 AR=llvm-ar-22 RANLIB=llvm-ranlib-22 NM=llvm-nm-22 ./configure
-          make
-          sudo make install
-          sudo ldconfig
-      - name: Performance
-        run: |
-          cd libreactorng/example
-          clang-22 -fuse-ld=lld server.c -lreactor -o server
-          sudo ./server &
-          sleep 60
-          wrk -t1 -c1 -d1m http://127.0.0.1:80/
-  v-gcc-15:
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - name: Install dependencies
-        run: |
-          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-          sudo apt update
-          sudo apt install -y libltdl-dev wrk gcc-15
-      - name: Install libreactorng
-        run: |
-          git clone https://github.com/fredrikwidlund/libreactorng.git
-          cd libreactorng
-          ./autogen.sh
-          CC=gcc-15 ./configure
-          make
-          sudo make install
-          sudo ldconfig
-      - name: Performance
-        run: |
-          cd libreactorng/example
-          gcc-15 server.c -lreactor -o server
-          sudo ./server &
-          sleep 60
+          sudo iotop -b -o -t -d 3 &
           wrk -t1 -c1 -d1m http://127.0.0.1:80/
