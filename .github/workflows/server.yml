@@ -10,13 +10,18 @@ jobs:
           chmod +x llvm.sh
           sudo ./llvm.sh 22
           sudo apt update
-          sudo apt install -y libltdl-dev
+          sudo apt install -y libltdl-dev wrk
       - name: Install libreactorng
         run: |
           git clone https://github.com/fredrikwidlund/libreactorng.git
           cd libreactorng
           find src/ -type f -name "*.[ch]" -exec sed -i -E 's/(__sync_[a-z_]+)\([[:space:]]*&/\1((size_t *)\&/g' {} +
           ./autogen.sh
-          CC=clang-22 ./configure
+          CC=clang-22 AR=llvm-ar-22 RANLIB=llvm-ranlib-22 NM=llvm-nm-22 ./configure
           make
           sudo make install
+      - name: Performance
+        run: |
+          cd libreactorng/example
+          clang-22 -o server
+          sudo ./server & wrk -t1 -c1 -d1m http://127.0.0.1:80/
