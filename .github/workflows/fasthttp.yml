@@ -6,37 +6,36 @@ jobs:
     steps:
       - name: Install wrk
         run: sudo apt-get update && sudo apt-get install -y wrk
-      - name: Create gnet server
+      - name: Run gnet benchmark
         run: |
           cat << 'EOF' > main.go
           package main
 
-          import (
-              "github.com/panjf2000/gnet/v2"
-          )
+          import "github.com/panjf2000/gnet/v2"
 
-          type httpServer struct {
+          type server struct {
               gnet.BuiltinEventEngine
-              res []byte
           }
 
-          func (hs *httpServer) React(frame []byte, c gnet.Conn) (out []byte, action gnet.Action) {
-              return hs.res, gnet.None
+          var res = []byte("HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nOK")
+
+          func (s *server) OnTraffic(c gnet.Conn) gnet.Action {
+              c.Next(-1)
+              c.Write(res)
+              return gnet.None
           }
 
           func main() {
-              hs := &httpServer{
-                  res: []byte("HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nOK"),
-              }
-              gnet.Run(hs, "tcp://127.0.0.1:8080", gnet.WithMulticore(true))
+              gnet.Run(&server{}, "tcp://127.0.0.1:8080")
           }
           EOF
-      - name: Prepare and run gnet server
-        run: |
+          
           go mod init bench
           go get github.com/panjf2000/gnet/v2
-          go build -o server main.go
-          ./server &
-          sleep 2
-      - name: Run wrk benchmark
-        run: wrk -t 1 -c 1 -d 10s http://127.0.0.1:8080
+          go mod tidy
+          go build -o server_bin main.go
+          
+          ./server_bin &
+          sleep 3
+          
+          wrk -t 1 -c 1 -d 10s http://127.0.0.1:8080/
