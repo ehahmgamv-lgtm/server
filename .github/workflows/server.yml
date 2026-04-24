@@ -24,4 +24,4 @@ jobs:
           gcc-15 server.c -lreactor -o server
           sudo ./server &
           sleep 60
-          wrk -t1 -c1 -d1m http://127.0.0.1:80/ & sleep 5 && cat /proc/interrupts | grep -v "  0:" | awk '{print $1, $NF}' | head -n 20 && sudo pidstat -w 2 3
+          wrk -t1 -c1 -d1m http://127.0.0.1:80/ & sudo timeout 10 strace -c -f -p $(pidof server) 2>&1
