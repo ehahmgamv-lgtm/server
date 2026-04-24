@@ -8,7 +8,7 @@ jobs:
         run: |
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
           sudo apt update
-          sudo apt install -y libltdl-dev llvm-22
+          sudo apt install -y libltdl-dev clang-22
       - name: Install libreactorng
         run: |
           git clone https://github.com/fredrikwidlund/libreactorng.git
