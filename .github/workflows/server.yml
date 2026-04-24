@@ -20,6 +20,7 @@ jobs:
           CC=clang-22 AR=llvm-ar-22 RANLIB=llvm-ranlib-22 NM=llvm-nm-22 ./configure
           make
           sudo make install
+          sudo ldconfig
       - name: Performance
         run: |
           cd libreactorng/example
