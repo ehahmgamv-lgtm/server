@@ -1,0 +1,33 @@
+name: Benchmark fasthttp
+on: [push, pull_request]
+jobs:
+  benchmark:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Install wrk
+        run: sudo apt-get update && sudo apt-get install -y wrk
+      - name: Create fasthttp server
+        run: |
+          cat << 'EOF' > main.go
+          package main
+
+          import (
+              "github.com/valyala/fasthttp"
+          )
+
+          func requestHandler(ctx *fasthttp.RequestCtx) {
+              ctx.SetBodyString("OK")
+          }
+
+          func main() {
+              fasthttp.ListenAndServe(":8080", requestHandler)
+          }
+          EOF
+      - name: Prepare and run fasthttp server
+        run: |
+          go mod init bench
+          go get github.com/valyala/fasthttp
+          go run main.go &
+          sleep 3
+      - name: Run wrk benchmark
+        run: wrk -t 1 -c 1 -d 10s http://localhost:8080
