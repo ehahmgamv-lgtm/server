@@ -1,4 +1,4 @@
-name: Benchmark fasthttp
+name: Benchmark gnet
 on: [push, pull_request]
 jobs:
   benchmark:
@@ -6,27 +6,35 @@ jobs:
     steps:
       - name: Install wrk
         run: sudo apt-get update && sudo apt-get install -y wrk
-      - name: Create fasthttp server
+      - name: Create gnet server
         run: |
           cat << 'EOF' > main.go
           package main
 
           import (
-              "github.com/valyala/fasthttp"
+              "github.com/panjf2000/gnet/v2"
           )
 
-          func requestHandler(ctx *fasthttp.RequestCtx) {
-              ctx.SetBodyString("OK")
+          type httpServer struct {
+              gnet.BuiltinEventEngine
+              res []byte
+          }
+
+          func (hs *httpServer) React(frame []byte, c gnet.Conn) (out []byte, action gnet.Action) {
+              return hs.res, gnet.None
           }
 
           func main() {
-              fasthttp.ListenAndServe("127.0.0.1:8080", requestHandler)
+              hs := &httpServer{
+                  res: []byte("HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nOK"),
+              }
+              gnet.Run(hs, "tcp://127.0.0.1:8080", gnet.WithMulticore(true))
           }
           EOF
-      - name: Prepare and run fasthttp server
+      - name: Prepare and run gnet server
         run: |
           go mod init bench
-          go get github.com/valyala/fasthttp
+          go get github.com/panjf2000/gnet/v2
           go build -o server main.go
           ./server &
           sleep 2
