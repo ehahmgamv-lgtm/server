@@ -23,5 +23,5 @@ jobs:
       - name: Performance
         run: |
           cd libreactorng/example
-          clang-22 server.c -o server
+          clang-22 server.c -lreactor -o server
           sudo ./server & wrk -t1 -c1 -d1m http://127.0.0.1:80/
