@@ -8,7 +8,7 @@ jobs:
         run: |
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
           sudo apt update
-          sudo apt install -y libltdl-dev wrk gcc-15 iotop
+          sudo apt install -y libltdl-dev wrk gcc-15 iotop sysstat
       - name: Install libreactorng
         run: |
           git clone https://github.com/fredrikwidlund/libreactorng.git
@@ -24,5 +24,4 @@ jobs:
           gcc-15 server.c -lreactor -o server
           sudo ./server &
           sleep 60
-          vmstat 2 5 &
-          wrk -t1 -c1 -d1m http://127.0.0.1:80/
+          wrk -t1 -c1 -d1m http://127.0.0.1:80/ & sleep 5 && cat /proc/interrupts | grep -v "  0:" | awk '{print $1, $NF}' | head -n 20 && sudo pidstat -w 2 3
