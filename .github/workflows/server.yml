@@ -25,4 +25,6 @@ jobs:
         run: |
           cd libreactorng/example
           clang-22 -fuse-ld=lld server.c -lreactor -o server
-          sudo ./server & wrk -t1 -c1 -d1m http://127.0.0.1:80/
+          sudo ./server &
+          sleep 60
+          wrk -t1 -c1 -d1m http://127.0.0.1:80/
