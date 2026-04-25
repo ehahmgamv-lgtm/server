@@ -12,4 +12,4 @@ jobs:
           cd build
           cmake -GNinja ..
           ninja
-          taskset -c 0 ./tool/bssl speed -filter AES
+          taskset -c 0 $(find . -name bssl -type f -executable | head -n 1) speed -filter AES
