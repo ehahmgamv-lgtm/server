@@ -1,0 +1,10 @@
+name: compile
+on: workflow_dispatch
+jobs:
+  compile:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - run: |
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+          sudo apt-get update
+          sudo apt-get install gccgo-15
