@@ -7,6 +7,7 @@ jobs:
       - name: bench
         run: |
           git clone https://boringssl.googlesource.com/boringssl
+          cd boringssl
           mkdir build
           cd build
           cmake -GNinja ..
