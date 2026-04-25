@@ -17,4 +17,4 @@ jobs:
           
           # Запускаем бенчмарки через crypto_test (фильтруем по AES)
           # Флаг --gtest_filter="-" отключает обычные тесты, чтобы запускались ТОЛЬКО бенчмарки
-          taskset -c 0 ./bssl_bench --benchmark_filter="AES"
+          ./bssl_bench --benchmark_filter="AES"
