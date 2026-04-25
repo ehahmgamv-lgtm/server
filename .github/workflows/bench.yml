@@ -1,0 +1,14 @@
+name: bench
+on: workflow_dispatch
+jobs:
+  bench:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: bench
+        run: |
+          git clone https://boringssl.googlesource.com/boringssl
+          mkdir build
+          cd build
+          cmake -GNinja ..
+          ninja
+          taskset -c 0 ./tool/bssl speed -filter AES
