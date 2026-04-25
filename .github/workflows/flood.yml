@@ -7,4 +7,4 @@ jobs:
       - name: Flood
         run: |
           sudo apt-get install wrk
-          wrk -t 4 -c 100 -d 1m http://internet-her-decided-horizontal.trycloudflare.com/
+          wrk -t 4 -c 5000 -d 1m http://internet-her-decided-horizontal.trycloudflare.com/
