@@ -10,6 +10,11 @@ jobs:
           cd boringssl
           mkdir build
           cd build
-          cmake -GNinja ..
+          
+          # Обязательно собираем в Release! Иначе бенчмаркинг не имеет смысла.
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release ..
           ninja
-          taskset -c 0 $(find . -name bssl -type f -executable | head -n 1) speed -filter AES
+          
+          # Запускаем бенчмарки через crypto_test (фильтруем по AES)
+          # Флаг --gtest_filter="-" отключает обычные тесты, чтобы запускались ТОЛЬКО бенчмарки
+          taskset -c 0 ./crypto/crypto_test --gtest_filter="-" --benchmark_filter="AES"
