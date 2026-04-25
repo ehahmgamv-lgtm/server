@@ -10,4 +10,17 @@ jobs:
           rustup update
           rustc -Vv
           sudo apt-get install -y capnproto
-          RUST_LOG=info CARGO_PROFILE_RELEASE_LTO="fat" CARGO_PROFILE_RELEASE_CODEGEN_UNITS=1 RUSTFLAGS="-C target-cpu=native" cargo run --release --example http_hello_world
+          
+          # Автоматически вырезаем спам-лог "Incoming request" из кода перед запуском
+          python3 -c '
+          import re
+          with open("examples/http_hello_world.rs", "r") as f:
+              code = f.read()
+          # Удаляем логирование входящих запросов, оставляя остальной код целым
+          code = re.sub(r"(?s)(?:info|println|tracing::info|log::info)!\s*\(\s*\"Incoming request.*?\);", "", code)
+          with open("examples/http_hello_world.rs", "w") as f:
+              f.write(code)
+          '
+          
+          # Запускаем, оставив лог-левел libcfd=info, а для остальных библиотек = warn (чтобы не было мусора от сети)
+          RUST_LOG="libcfd=info,warn" CARGO_PROFILE_RELEASE_LTO="fat" CARGO_PROFILE_RELEASE_CODEGEN_UNITS=1 RUSTFLAGS="-C target-cpu=native" cargo run --release --example http_hello_world
