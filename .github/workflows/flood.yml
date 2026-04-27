@@ -7,4 +7,4 @@ jobs:
       - name: Flood
         run: |
           sudo apt-get install -y wrk
-          wrk -t 4 -c 1000 -d 1m http://technology-prefix-caused-games.trycloudflare.com/api/stat
+          wrk -t 4 -c 1000 -d 1m http://herb-cheaper-hollywood-refined.trycloudflare.com/api/update
