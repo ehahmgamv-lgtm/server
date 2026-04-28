@@ -8,4 +8,4 @@ jobs:
         run: |
           wget https://github.com/codesenberg/bombardier/releases/download/v2.0.2/bombardier-linux-arm64
           chmod +x bombardier-linux-arm64
-          ./bombardier-linux-arm64 -d 600s https://lscf.eu.cc/api/update
+          ./bombardier-linux-arm64 -d 10s https://lscf.eu.cc/api/update
